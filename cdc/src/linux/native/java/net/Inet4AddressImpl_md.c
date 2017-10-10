@@ -320,20 +320,3 @@ Java_java_net_Inet4AddressImpl_getHostByAddr(JNIEnv *env, jobject this,
     }
     return ret;
 }
-
-int gethostbyaddr_r(const char *addr, socklen_t len, int type, struct hostent *ret, char *buf, size_t buflen,
-               struct hostent **result, int *h_errnop) {
-
-    struct hostent *res;
-
-    res = gethostbyaddr(addr, len, type);
-    *h_errnop = h_errno;
-    if (res == NULL) {
-        *result = NULL;
-        return -1;
-    }
-    memcpy(ret, res, sizeof *ret);
-    *result = ret;
-    return 0;
-}
-
