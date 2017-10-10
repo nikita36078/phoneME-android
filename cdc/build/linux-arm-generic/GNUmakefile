@@ -72,11 +72,11 @@ CC_ARCH_FLAGS_LOOP 	=
 # LINK_ARCH_FLAGS: Usually empty. If you need to specify -msoft-float
 # or -mhard-float in CC_ARCH_FLAGS, you may need to do the same in
 # LINK_ARCH_FLAGS.
-LINK_ARCH_FLAGS		=
+LINK_ARCH_FLAGS		+=
 
 # LINK_ARCH_LIBS: Used for extra libraries that you need to link with on
 # your platform. Usually empty for ARM. On some other platforms -lm is needed.
-LINK_ARCH_LIBS		=
+LINK_ARCH_LIBS		+=
 
 # Only enable USE_GCC2 if GCC 3.x or later is *not* being used
 USE_GCC2 ?= false
@@ -105,7 +105,7 @@ CVM_JIT_USE_FP_HARDWARE ?= false
 # you would use:
 #
 #    CVM_TARGET_TOOLS_PREFIX=/opt/arm-linux/bin/arm-linux-
-CVM_TARGET_TOOLS_PREFIX=/opt/arm-linux/bin/arm-linux-
+CVM_TARGET_TOOLS_PREFIX ?= /opt/arm-linux/bin/arm-linux-
 
 #
 # Here are a number of common settings you may need or want to use on ARM.
