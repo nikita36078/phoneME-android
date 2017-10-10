@@ -85,7 +85,7 @@ KNIDECL(com_sun_midp_rms_RecordStoreUtil_exists) {
  *         internally.
  */
 
-KNIEXPORT KNI_RETURNTYPE_BOOLEAN
+KNIEXPORT KNI_RETURNTYPE_VOID
 KNIDECL(com_sun_midp_rms_RecordStoreUtil_deleteFile) {
     int extension = KNI_GetParameterAsInt(3);
     jboolean existed = KNI_FALSE;
@@ -118,6 +118,6 @@ KNIDECL(com_sun_midp_rms_RecordStoreUtil_deleteFile) {
 
     KNI_EndHandles();
 
-    KNI_ReturnBoolean(existed);
+    KNI_ReturnVoid();
 }
 

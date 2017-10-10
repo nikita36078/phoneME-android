@@ -161,7 +161,7 @@ public class InternalConnectorImpl implements InternalConnector {
              * Use the platform and protocol names to look up
              * a class to implement the connection
              */
-            String className = getClassRoot() + "." + "j2me"+ "." + protocol +
+            String className = "com.sun.cdc.io.j2me." + protocol +
                ".Protocol";
             Class clazz = Class.forName(className, true,
                                         getProtocolClassLoader());

@@ -407,6 +407,7 @@ KNIDECL(com_sun_midp_events_NativeEventMonitor_waitForNativeEvent) {
     int keyboard_has_event = 0;
 #else
     int keyboardFd = fbapp_get_keyboard_fd();
+    int mouseFd = fbapp_get_mouse_fd();
 #endif /* defined(DIRECTFB) */
     int done = 0;
 
@@ -426,6 +427,14 @@ KNIDECL(com_sun_midp_events_NativeEventMonitor_waitForNativeEvent) {
             FD_SET(keyboardFd, &read_fds);
             if (num_fds <= keyboardFd) {
                 num_fds = keyboardFd + 1;
+            }
+        }
+
+        mouseFd = fbapp_get_mouse_fd();
+        if (mouseFd >= 0) {
+            FD_SET(mouseFd, &read_fds);
+            if (num_fds <= mouseFd) {
+                num_fds = mouseFd + 1;
             }
         }
 
@@ -496,6 +505,29 @@ KNIDECL(com_sun_midp_events_NativeEventMonitor_waitForNativeEvent) {
                            "down" : "up",
                            newMidpEvent.CHR);
 #endif
+                    done = 1;
+                }
+            } else if (FD_ISSET(mouseFd, &read_fds)) {
+                newSignal.waitingFor = 0;
+                newSignal.pResult = NULL;
+                MIDP_EVENT_INITIALIZE(newMidpEvent);
+
+                handlePointer(&newSignal, &newMidpEvent);
+                /* Need to set the event DISPLAY (intParam4) to forground. See
+                   midpStoreEventAndSignalForeground() in midpEventUtil.c. */
+                newMidpEvent.DISPLAY = gForegroundDisplayId;
+                if (newSignal.waitingFor == UI_SIGNAL
+                    || newSignal.waitingFor == AMS_SIGNAL) {
+                    KNI_SetIntField(eventObj, typeFieldID, newMidpEvent.type);
+                    KNI_SetIntField(eventObj, intParam1FieldID,
+                                    newMidpEvent.intParam1);
+                    KNI_SetIntField(eventObj, intParam2FieldID,
+                                    newMidpEvent.intParam2);
+                    KNI_SetIntField(eventObj, intParam3FieldID,
+                                    newMidpEvent.intParam3);
+                    KNI_SetIntField(eventObj, intParam4FieldID,
+                                    newMidpEvent.intParam4);
+
                     done = 1;
                 }
             } else if (FD_ISSET(controlPipe[0], &read_fds)) {

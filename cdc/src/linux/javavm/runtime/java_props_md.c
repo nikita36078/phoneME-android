@@ -28,7 +28,7 @@
 #include <pwd.h>
 #include <locale.h>
 #include <sys/utsname.h>	/* For os_name and os_version */
-#include <langinfo.h>           /* For nl_langinfo */
+// #include <langinfo.h>           /* For nl_langinfo */
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
@@ -308,7 +308,7 @@ CVMgetJavaProperties(java_props_t *sprops)
              * point because that mapping is handled by the character
              * converter alias table in CharacterEncoding.java.
              */
-            p = nl_langinfo(CODESET);
+            // p = nl_langinfo(CODESET);
 	    /* SVMC d022301 17.02.2003
 	     * it seems that nl_langinfo() does not return standardized
 	     * strings. 'locale charmap' return on
@@ -327,6 +327,7 @@ CVMgetJavaProperties(java_props_t *sprops)
 	    } else {
 		std_encoding = p;
 	    }
+	    std_encoding = "ISO8859_1";
             /*  
              * Remap the encoding string to a different value for japanese
              * locales on linux so that customized converters are used instead

@@ -45,6 +45,9 @@ typedef struct _KeyMapping {
     unsigned raw_keyup;
 } KeyMapping;
 
+/** Keyboard info for the smartphone */
+extern KeyMapping smartphone_keys[];
+
 /** Keyboard info for the ARM Versatile and Integrator boards */
 extern KeyMapping versatile_integrator_keys[];
 

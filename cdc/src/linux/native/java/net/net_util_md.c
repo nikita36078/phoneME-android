@@ -255,7 +255,12 @@ jint  IPv6_supported()
      *  OK we may have the stack available in the kernel,
      *  we should also check if the APIs are available.
      */
+#if 0 
     ipv6_fn = dlsym(RTLD_DEFAULT, "inet_pton");
+#else
+    // No -ldl means no dlsym()
+    ipv6_fn = NULL;
+#endif
     if (ipv6_fn == NULL ) { 
 	close(fd);
 	return JNI_FALSE;
@@ -268,6 +273,7 @@ jint  IPv6_supported()
      * libraries, therefore we can't have a hard link to these
      * functions.
      */
+#if 0
     getaddrinfo_ptr = (getaddrinfo_f)
         dlsym(RTLD_DEFAULT, "getaddrinfo");
 
@@ -276,6 +282,12 @@ jint  IPv6_supported()
 
     getnameinfo_ptr = (getnameinfo_f)
         dlsym(RTLD_DEFAULT, "getnameinfo");
+#else
+    // No -ldl means no dlsym()
+    getaddrinfo_ptr = NULL;
+    freeaddrinfo_ptr = NULL;
+    getnameinfo_ptr = NULL;
+#endif
 
     if (freeaddrinfo_ptr == NULL || getnameinfo_ptr == NULL) {
         /* We need all 3 of them */

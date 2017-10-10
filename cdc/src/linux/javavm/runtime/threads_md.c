@@ -92,6 +92,7 @@ linuxCaptureInitialStack()
     struct rlimit rlim;
     void *sp = &dummy;
 
+#if 0
 #ifdef LINUX_DLSYM_BUG
     void * handle = dlopen("libpthread.so.0", RTLD_LAZY);
     if (handle != NULL) {
@@ -108,6 +109,12 @@ linuxCaptureInitialStack()
             (pthread_attr_getstack_t)dlsym(RTLD_DEFAULT, 
                                            "pthread_attr_getstack");
 #endif
+#else
+    // No -ldl means no dlopen() or dlsym()
+    pthreadGetAttr = NULL;
+    pthreadAttrGetStack = NULL;
+#endif
+
     initial_thread_id = pthread_self();
 
     getrlimit(RLIMIT_STACK, &rlim);

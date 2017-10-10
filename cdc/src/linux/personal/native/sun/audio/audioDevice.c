@@ -31,7 +31,7 @@
 #include <sys/types.h>
 #include <sys/errno.h>
 #include <unistd.h>
-#include <stropts.h>
+//#include <stropts.h>
 
 #include "sun_audio_AudioDevice.h"
 
@@ -93,14 +93,14 @@ Java_sun_audio_AudioDevice_initIDs(JNIEnv *env, jobject obj)
 JNIEXPORT jint JNICALL
 Java_sun_audio_AudioDevice_audioOpen(JNIEnv *env, jobject this)
 {
-    extern int errno;
+    int err = ENODEV;
     int flags = 0;
 
     if (sun_audio_audioFd < 0) {
         errno = 0;
         /* Open /dev/dsp as sound sample will be converted to linear encoding */
         if ((sun_audio_audioFd = open("/dev/dsp", O_SYNC | O_WRONLY | O_NONBLOCK)) < 0) {
-            switch (errno) {
+            switch (err) {
               case ENODEV:
               case EACCES:
                 /* Dont bother, there is no audio device */

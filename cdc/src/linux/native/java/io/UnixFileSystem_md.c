@@ -77,11 +77,11 @@ typedef int timestruc_t;
    (e.g., Solaris 2.5.1).  These definitions are copied from the Solaris 2.6
    <sys/stat.h> and <sys/types.h> files.
  */
-typedef longlong_t      off64_t;        /* offsets within files */
+typedef longlong_t      off64_t_;        /* offsets within files */
 typedef u_longlong_t    ino64_t;        /* expanded inode type  */
 typedef longlong_t      blkcnt64_t;     /* count of file blocks */
 
-struct	stat64 {
+struct	stat64_ {
 	dev_t	st_dev;
 	long	st_pad1[3];
 	ino64_t	st_ino;

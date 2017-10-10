@@ -35,7 +35,7 @@
 #include <net/if.h>
 #ifdef __linux__
 #include <sys/ioctl.h>
-#include <bits/ioctls.h>
+// #include <bits/ioctls.h>
 #include <linux/sockios.h>
 #include <stdio.h>
 #else

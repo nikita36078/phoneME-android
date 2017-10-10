@@ -550,6 +550,7 @@ CVMgetGMTOffsetID()
 {
     time_t offset;
     char sign, buf[16];
+    int timezone = 0;
 
     if (timezone == 0) {
 	return strdup("GMT");

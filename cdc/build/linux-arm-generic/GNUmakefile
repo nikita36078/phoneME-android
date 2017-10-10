@@ -84,7 +84,7 @@ USE_GCC2 ?= false
 # CVM_DEFINES: Used to add extra compiler defines. This is used to enable
 # extra VM features, like supporting Intels WMMX coprocessor and other
 # optimizations that are not normally enabled.
-CVM_DEFINES +=
+CVM_DEFINES += -D__GLIBC__ -DRTF_POLICY=0 -DRTF_FLOW=0
 
 # USE_AAPCS is used to tell the source to enable AAPCS calling
 # conventions rather than APCS. This is usually needed for MontaVista.

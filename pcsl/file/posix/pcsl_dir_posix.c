@@ -31,10 +31,12 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <unistd.h>
-#include <sys/statvfs.h>
+#include <sys/statfs.h>
 
 #include <pcsl_directory.h>
 #include <pcsl_memory.h>
+
+#define statvfs statfs
 
 /**
  * @def PCSL_DIR_MAX_NAME_LEN

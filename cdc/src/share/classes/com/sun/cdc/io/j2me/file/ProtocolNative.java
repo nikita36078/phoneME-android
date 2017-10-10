@@ -1,4 +1,12 @@
 /*
+ * NOTICE: Portions Copyright (c) 2007-2009 Davy Preuveneers.
+ * This file has last been modified by Davy Preuveneers on 2010-02-23. The
+ * changes are licensed under the terms of the GNU General Public
+ * License version 2. This notice was added to meet the conditions of
+ * Section 3.a of the GNU General Public License version 2.
+ */
+
+/*
  * @(#)ProtocolNative.java	1.8 06/10/10
  *
  * Copyright  1990-2008 Sun Microsystems, Inc. All Rights Reserved.  
@@ -72,6 +80,9 @@ public abstract class ProtocolNative extends ProtocolBase {
 
         if(name.length() >= 2 && name.charAt(0) == '/' && name.charAt(1) == '/') {
             if(name.length() >= 3) {
+                if(name.startsWith("//localhost/")) {
+                    name = "///" + name.substring(12);
+                }
                 if(name.charAt(2) != '/') {
                     throw new IllegalArgumentException("Network format not implemented "+name);
                 } else {

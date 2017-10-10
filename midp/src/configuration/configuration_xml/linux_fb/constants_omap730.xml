@@ -28,11 +28,11 @@
 <constant_class Package="com.sun.midp.configurator" Name="Constants" Scope="public">
   <constant Type="boolean"
             Name="POINTER_SUPPORTED"
-            Value="false" 
+            Value="true" 
             Comment="Whether both the platform and MIDP implementation provide support for a pointer (press and release). Set to true when pointer is supported; set to false when pointer is not supported."/>
   <constant Type="boolean"
             Name="MOTION_SUPPORTED"
-            Value="false" 
+            Value="true" 
             Comment="If your platform supports pointer motion and you want MIDP implementation provides support for pointer motions, set it to true; otherwise, set it to false so that MIDP runtime can provide this information to MIDlet."/>
   <constant Type="boolean"
             Name="REPEAT_SUPPORTED"

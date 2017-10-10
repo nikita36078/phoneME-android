@@ -77,10 +77,16 @@ jboolean read_omap730_key_event() {
 
 /** Update input keys state reading single char from keyboard device */
 jboolean read_char_key_event() {
-    unsigned char c;
+    unsigned short c;
     int readBytes = read(fbapp_get_keyboard_fd(), &c, sizeof(c));
     keyState.key = c;
     keyState.down = -1;
+
+    if (c == 0x0080) {
+        readBytes = read(fbapp_get_keyboard_fd(), &c, sizeof(c));
+        keyState.key = 0x010000 + c;
+    }
+
     return (readBytes > 0) ?
         KNI_TRUE : KNI_FALSE;
 }

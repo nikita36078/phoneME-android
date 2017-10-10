@@ -151,15 +151,16 @@ void fbapp_set_fullscreen_mode(int hardwareId, int mode) {
     }
 }
 
+int get_surface_height();
+int get_surface_width();
+
 /** Return screen width */
 int fbapp_get_screen_width(int hardwareId) {
     (void)hardwareId;
     if (reverse_orientation) {
-        return (isFullScreen == 1) ?
-            CHAM_FULLHEIGHT : CHAM_HEIGHT;
+        return get_surface_height();
     } else {
-        return (isFullScreen == 1) ?
-            CHAM_FULLWIDTH : CHAM_WIDTH;
+        return get_surface_width();
     }
 }
 
@@ -167,11 +168,9 @@ int fbapp_get_screen_width(int hardwareId) {
 int fbapp_get_screen_height(int hardwareId) {
     (void)hardwareId;
     if (reverse_orientation) {
-        return (isFullScreen == 1) ?
-            CHAM_FULLWIDTH : CHAM_WIDTH;
+        return get_surface_width();
     } else {
-        return (isFullScreen == 1) ?
-            CHAM_FULLHEIGHT : CHAM_HEIGHT;
+        return get_surface_height();
     }
 }
 

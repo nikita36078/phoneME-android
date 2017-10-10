@@ -2321,8 +2321,8 @@ CFLAGS_LOOP    	= $(CFLAGS) $(CCFLAGS_LOOP)  $(CPPFLAGS)
 CFLAGS_FDLIB   	= $(CFLAGS) $(CCFLAGS_FDLIB) $(CPPFLAGS)
 CFLAGS_JCS	= 
 
-LINKFLAGS       += -g -Wl,-export-dynamic $(LINK_ARCH_FLAGS)
-LINKLIBS     	+= -lpthread -ldl $(LINK_ARCH_LIBS)
+LINKFLAGS       += -Wl,-export-dynamic $(LINK_ARCH_FLAGS)
+LINKLIBS     	+=  -Wl,-wrap,exit -ldl $(LINK_ARCH_LIBS)
 LINKLIBS_JCS    +=
 
 SO_CCFLAGS   	= $(CCFLAGS_SPEED)

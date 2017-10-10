@@ -108,24 +108,10 @@ static void init_key_device() {
     if (!done) {
         done = KNI_TRUE;
         memset(&keyState, 0, sizeof(keyState));
-        switch (fbapp_get_fb_device_type()) {
-        case LINUX_FB_OMAP730:
-            mapping = omap_730_keys;
-            bitscale_mode = KNI_TRUE;
-            readKeyEvent = read_omap730_key_event;
-            break;
-        case LINUX_FB_ZAURUS:
-            mapping = zaurus_sl5500_keys;
-            bitscale_mode = KNI_FALSE;
-            readKeyEvent = read_char_key_event;
-            break;
-        case LINUX_FB_VERSATILE_INTEGRATOR:
-        default:
-            mapping = versatile_integrator_keys;
-            bitscale_mode = KNI_FALSE;
-            readKeyEvent = read_char_key_event;
-            break;
-        }
+        mapping = smartphone_keys;
+        bitscale_mode = KNI_FALSE;
+        readKeyEvent = read_char_key_event;
+
 #ifdef DIRECTFB
         /* DirectFB provides generic function to read input key events */
         readKeyEvent = read_directfb_key_event;
@@ -171,6 +157,21 @@ static void find_raw_key_mapping() {
             } else if (km->raw_keyup == key) {
                 down = 0;
                 break;
+            } else if (km->raw_keydown == key - 0x010000) { // Key up = Key down + 0x010000
+                down = 0;
+                break;
+            }
+        }
+        if (km->midp_keycode == KEYMAP_KEY_INVALID) {
+            km++;
+            if (key > 0x010000) {
+                down = 0;
+                km->raw_keydown == key - 0x010000;
+                km->raw_keyup == key - 0x010000;
+            } else {
+                down = 1;
+                km->raw_keydown == key;
+                km->raw_keyup == key;
             }
         }
     }
@@ -211,6 +212,10 @@ void handle_key_port(MidpReentryData* pNewSignal, MidpEvent* pNewMidpEvent) {
    }
 }
 
+int min(int a, int b) {
+    return (a < b ? a : b);
+}
+
 /**
  * ARM version to read mouse events.
  * By default it's empty because currently it does not supported pointer events
@@ -220,8 +225,87 @@ void handle_key_port(MidpReentryData* pNewSignal, MidpEvent* pNewMidpEvent) {
  * @param pNewMidpEvent     a native MIDP event to be stored to Java event queue
  */
 void handle_pointer_port(MidpReentryData* pNewSignal, MidpEvent* pNewMidpEvent) {
-    (void)pNewSignal;
-    (void)pNewMidpEvent;
+    int maxX, maxY, screenX, screenY, d1, d2;
+    int n;
+    int id;
+    static const int mouseBufSize = 12;
+    unsigned char mouseBuf[mouseBufSize];
+    int mouseIdx = 0;
+    jboolean pressed = KNI_FALSE;
+
+    static struct {
+        int x;
+        int y;
+        int state;
+    } pointer;
+
+    do {
+        n = read(fbapp_get_mouse_fd(), mouseBuf + mouseIdx,
+                mouseBufSize - mouseIdx);
+        if ( n > 0 )
+            mouseIdx += n;
+    } while ( n > 0 );
+
+    /* unexpected data size.  Broken package, no handling - just return */
+    if (mouseIdx < mouseBufSize)
+        return;
+
+    pNewMidpEvent->type = MIDP_PEN_EVENT;
+    id = fbapp_get_current_hardwareId();
+    screenX = fbapp_get_screen_x(id);
+    screenY = fbapp_get_screen_y(id);
+    maxX = fbapp_get_screen_width(id);
+    maxY = fbapp_get_screen_height(id);
+
+    d1 = (((int)mouseBuf[3]) << 24) +
+        (((int)mouseBuf[2]) << 16) +
+        (((int)mouseBuf[1]) << 8) +
+        (int)mouseBuf[0];
+
+    d2 = (((int)mouseBuf[7]) << 24) +
+        (((int)mouseBuf[6]) << 16) +
+        (((int)mouseBuf[5]) << 8) +
+        (int)mouseBuf[4];
+
+    if (fbapp_get_reverse_orientation(id)) {
+        pNewMidpEvent->X_POS = min(maxX - d2, maxX) + screenX;
+        pNewMidpEvent->Y_POS = min(d1 - screenY, maxY);
+    } else {
+        pNewMidpEvent->X_POS = min(d1 - screenX, maxX);
+        pNewMidpEvent->Y_POS = min(d2 - screenY, maxY);
+    }
+
+    if (pNewMidpEvent->X_POS < 0) {
+        pNewMidpEvent->X_POS = 0;
+    }
+
+    if (pNewMidpEvent->Y_POS < 0) {
+        pNewMidpEvent->Y_POS = 0;
+    }
+
+    pressed = mouseBuf[8]  ||
+        mouseBuf[9]  ||
+        mouseBuf[10] ||
+        mouseBuf[11];
+
+    if (pressed) {
+        if ((pointer.state == KEYMAP_STATE_PRESSED) || (pointer.state == KEYMAP_STATE_DRAGGED)) {
+            pNewMidpEvent->ACTION = KEYMAP_STATE_DRAGGED;
+        } else {
+            pNewMidpEvent->ACTION = KEYMAP_STATE_PRESSED;
+        }
+    } else {
+        pNewMidpEvent->ACTION = KEYMAP_STATE_RELEASED;
+    }
+
+    if ( pNewMidpEvent->ACTION != -1 ) {
+        pNewSignal->waitingFor = UI_SIGNAL;
+    }
+
+    /* keep the previous coordinates to detect dragged event */
+    pointer.x = pNewMidpEvent->X_POS;
+    pointer.y = pNewMidpEvent->Y_POS;
+    pointer.state = pNewMidpEvent->ACTION;
 }
 
 /**

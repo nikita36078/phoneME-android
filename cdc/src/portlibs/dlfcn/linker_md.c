@@ -72,6 +72,7 @@ CVMdynlinkOpen(const void *absolutePathName)
 {
     void *handle;
 
+#if 0
     handle = dlopen((const char *) absolutePathName, RTLD_LAZY);
 #ifdef CVM_DEBUG
     if (!handle) {
@@ -79,12 +80,18 @@ CVMdynlinkOpen(const void *absolutePathName)
         fputs("\n", stderr);         
     }
 #endif
+#else
+    // No -ldl means no dlopen()
+    /// fprintf(stderr, "CVMdynlinkOpen(%s)\n", (char *)absolutePathName);
+    handle = NULL;
+#endif
     return handle;
 }
 
 void *
 CVMdynlinkSym(void *dsoHandle, const void *name)
 {
+#if 0
     assert(dsoHandle != NULL);
     /*
      * Some platforms (namely bsd) require that you prepend the
@@ -114,12 +121,22 @@ CVMdynlinkSym(void *dsoHandle, const void *name)
 #else
     return dlsym(dsoHandle, (const char *) name);
 #endif
+#else
+    // No -ldl means no dlsym()
+    /// fprintf(stderr, "CVMdynlinkSym(%08x,%s)\n", (int)dsoHandle, (char *)name);
+    return NULL;
+#endif
 }
 
 void
 CVMdynlinkClose(void *dsoHandle)
 {
+#if 0
     dlclose(dsoHandle);
+#else
+    // No -ldl means no dlclose();
+    /// fprintf(stderr, "CVMdynlinkClose(%08x)\n", (int)dsoHandle);
+#endif
 }
 
 CVMBool
@@ -127,10 +144,16 @@ CVMdynlinkExists(const char *name)
 {
     void *handle;
 
+#if 0
     handle = dlopen((const char *) name, RTLD_LAZY);
     if (handle != NULL) {
         dlclose(handle);
     }
+#else
+    // No -ldl means no dlopen();
+    /// fprintf(stderr, "CVMdynlinkExists(%s)\n", name);
+    handle = NULL;
+#endif
     return (handle != NULL);
 }
 

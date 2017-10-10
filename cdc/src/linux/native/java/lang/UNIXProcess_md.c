@@ -34,11 +34,14 @@
  */
 
 #include <stdlib.h>
-#include <wait.h>
+// #include <wait.h>
 #include <signal.h>
 #include <string.h>
 #include <errno.h>
 #include <sys/stat.h>
+
+#include <sys/types.h>
+#include <unistd.h>
 
 #ifdef JDK
 /* path in the environment */

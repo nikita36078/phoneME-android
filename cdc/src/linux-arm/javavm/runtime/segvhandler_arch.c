@@ -46,6 +46,33 @@
    doesn't always get it right.
 */
 /* avoid conflicting ucontext definitions */
+
+#define sigcontext asm_sigcontext
+struct sigcontext {
+ unsigned long trap_no;
+ unsigned long error_code;
+ unsigned long oldmask;
+ unsigned long arm_r0;
+ unsigned long arm_r1;
+ unsigned long arm_r2;
+ unsigned long arm_r3;
+ unsigned long arm_r4;
+ unsigned long arm_r5;
+ unsigned long arm_r6;
+ unsigned long arm_r7;
+ unsigned long arm_r8;
+ unsigned long arm_r9;
+ unsigned long arm_r10;
+ unsigned long arm_fp;
+ unsigned long arm_ip;
+ unsigned long arm_sp;
+ unsigned long arm_lr;
+ unsigned long arm_pc;
+ unsigned long arm_cpsr;
+ unsigned long fault_address;
+};
+
+
 #define ucontext asm_ucontext
 struct ucontext {
 	unsigned long	  uc_flags;
@@ -82,7 +109,12 @@ callSysSigaction(int sig, const struct sigaction *act,
 	    dlclose(handle);
         }
 #else
+#if 0
         sysSigaction[idx] = (sigaction_t)dlsym(RTLD_NEXT, sysSigactionName[idx]);
+#else
+	// No -ldl means no dlsym()
+	sysSigaction[idx] = NULL;
+#endif
 #endif
         if (sysSigaction[idx] == NULL) {
 	    CVMdebugPrintf(("WARNING: lookup of __sigaction failed."));
@@ -134,13 +166,13 @@ CVMsigaction(int sig, const struct sigaction *act,
 }
 
 int
-sigaction(int sig, const struct sigaction *act, struct sigaction *oact)
+sigaction0(int sig, const struct sigaction *act, struct sigaction *oact)
 {
     return CVMsigaction(sig, act, oact, 0);
 }
 
 int 
-__sigaction(int sig, const struct sigaction *act, struct sigaction *oact)
+__sigaction0(int sig, const struct sigaction *act, struct sigaction *oact)
 {
     return CVMsigaction(sig, act, oact, 1);
 }

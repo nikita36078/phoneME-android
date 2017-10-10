@@ -38,4 +38,4 @@ vpath % $(FB_PORT_DIR)/native
 # Additional native files for the platform
 #
 SUBSYSTEM_APP_NATIVE_FILES += \
-    fb_port.c
+    fb_port_android.c

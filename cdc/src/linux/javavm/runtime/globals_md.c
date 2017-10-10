@@ -185,16 +185,17 @@ CVMBool CVMinitStaticState(CVMpathInfo *pathInfo)
 
     linuxNetInit();
 
-    sigignore(SIGPIPE);
+    /// sigignore(SIGPIPE);
     
 #ifdef __VFP_FP__    
     /* TODO: Needed for armboard5. Should be moved to ARM specific code. */
-    sigignore(SIGFPE);
+    /// sigignore(SIGFPE);
 #endif
 
     {
 	char buf[MAXPATHLEN + 1], *p0, *p;
 
+#if 0
 	{
 	    Dl_info dlinfo;
 	    int l = readlink("/proc/self/exe", buf, sizeof buf - 1);
@@ -239,6 +240,11 @@ CVMBool CVMinitStaticState(CVMpathInfo *pathInfo)
 		}
 	    }
 	}
+#else
+	// No -ldl means no dladdr()
+	strcpy(buf, "/data/data/be.preuveneers.phoneme.fpmidp/foundation/bin/cvm");
+	p0 = buf;
+#endif
 
 	/* get rid of .../bin/cvm */
 	p = strrchr(p0, '/');
