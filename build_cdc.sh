@@ -13,7 +13,6 @@ export CVM_DEBUG=false
 export CVM_JIT=false
 export USE_AAPCS=true
 export J2ME_CLASSLIB=foundation
-export CVM_PRELOAD_LIB=true
 export TOOLS_DIR=$WORK_DIR/tools
 
 export CVM_DEFINES="--sysroot=/home/android/android-ndk-r14b/platforms/android-24/arch-arm/ -fPIE"
