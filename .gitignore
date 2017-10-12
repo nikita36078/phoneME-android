@@ -1,3 +1,4 @@
 midp/src/tool/fontgen/buildtimeFontGenerator/build
-/cdc/build/linux-arm-generic/out
-/cdc/install
+cdc/build/linux-arm-generic/out
+cdc/install
+tools/output
