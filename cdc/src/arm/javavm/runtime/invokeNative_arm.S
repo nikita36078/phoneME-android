@@ -166,7 +166,8 @@ ENTRY1(CVMjniInvokeNative)
 LABEL(args_loop)
 	and	SIGBYTE,SIGBUFF,TYPEMASK
 	mov	SIGBUFF,SIGBUFF, lsr TYPESHIFT
-	ldr	pc, [SWITCHBASE, SIGBYTE, lsl #2]
+	ldr	SIGBYTE, [SWITCHBASE, SIGBYTE, lsl #2]
+	add	pc, SIGBYTE, SWITCHBASE
 
 LABEL(arg_32)			
 	/* move a 32-bit value from [JSTKPTR] to [CSTKPTR]. */
@@ -175,7 +176,8 @@ LABEL(arg_32)
 	str	a3,[CSTKPTR], #4
 
 	mov	SIGBUFF,SIGBUFF, lsr TYPESHIFT
-	ldr	pc, [SWITCHBASE, SIGBYTE, lsl #2]
+	ldr	SIGBYTE, [SWITCHBASE, SIGBYTE, lsl #2]
+	add	pc, SIGBYTE, SWITCHBASE
 
 LABEL(arg_64)
 	ldmia	JSTKPTR!, {a3,SIGBYTE}
@@ -187,7 +189,8 @@ LABEL(arg_64)
 	stmia	CSTKPTR!, {a3,SIGBYTE}
 	and	SIGBYTE,SIGBUFF,TYPEMASK
 	mov	SIGBUFF, SIGBUFF, lsr TYPESHIFT
-	ldr	pc, [SWITCHBASE, SIGBYTE, lsl #2]
+	ldr	SIGBYTE, [SWITCHBASE, SIGBYTE, lsl #2]
+	add	pc, SIGBYTE, SWITCHBASE
 		
 LABEL(arg_object)
 	ldr	a3,[JSTKPTR],#4
@@ -200,7 +203,8 @@ LABEL(object_checked)
 
 	str	a3,[CSTKPTR], #4
 	mov	SIGBUFF,SIGBUFF, lsr TYPESHIFT
-	ldr	pc, [SWITCHBASE, SIGBYTE, lsl #2]
+	ldr	SIGBYTE, [SWITCHBASE, SIGBYTE, lsl #2]
+	add	pc, SIGBYTE, SWITCHBASE
 
 LABEL(arg_reload)
 	/* get another word full of types */
@@ -211,7 +215,8 @@ LABEL(arg_reload)
 	and	SIGBYTE,SIGBUFF,TYPEMASK
 
 	mov	SIGBUFF,SIGBUFF, lsr TYPESHIFT
-	ldr	pc, [SWITCHBASE, SIGBYTE, lsl #2]
+	ldr	SIGBYTE, [SWITCHBASE, SIGBYTE, lsl #2]
+	add	pc, SIGBYTE, SWITCHBASE
 
 LABEL(args_done)
     /* The ARM procedure call standard we are using specifies that the first */
@@ -238,7 +243,8 @@ LABEL(args_done)
 
 	/* thread the return address to the */
 	/* proper code for our return type */
-	ldr	pc,[SWITCHBASE, RETTYPE, lsl #2]
+	ldr	RETTYPE,[SWITCHBASE, RETTYPE, lsl #2]
+	add	pc, RETTYPE, SWITCHBASE
 
 LABEL(ret_obj)
 	str	a1,[a4]
@@ -278,36 +284,36 @@ LABEL(ret_void)
 	BR_REG(lr)
 
 LABEL(ret_jumps)		
-	WORD(ret_void)	/* error */
-	WORD(ret_void)	/* ENDFUNC should not get called */
-	WORD(ret_void)	/* void */
-	WORD(ret_s32)		/* int */
-	WORD(ret_s32)		/* short */
-	WORD(ret_s32)		/* char */
-	WORD(ret_s64)		/* long */
-	WORD(ret_s32)		/* byte */
+	WORD(ret_void)-ret_jumps	/* error */
+	WORD(ret_void)-ret_jumps	/* ENDFUNC should not get called */
+	WORD(ret_void)-ret_jumps	/* void */
+	WORD(ret_s32)-ret_jumps		/* int */
+	WORD(ret_s32)-ret_jumps		/* short */
+	WORD(ret_s32)-ret_jumps		/* char */
+	WORD(ret_s64)-ret_jumps		/* long */
+	WORD(ret_s32)-ret_jumps		/* byte */
 #ifdef CVM_ARM_FLOAT_RESULT_IN_FLOAT_REGISTER	
-	WORD(ret_f32)		/* float */
-	WORD(ret_f64)		/* double */
+	WORD(ret_f32)-ret_jumps		/* float */
+	WORD(ret_f64)-ret_jumps		/* double */
 #else
-	WORD(ret_s32)		/* float */
-	WORD(ret_s64)		/* double */
+	WORD(ret_s32)-ret_jumps		/* float */
+	WORD(ret_s64)-ret_jumps		/* double */
 #endif
-	WORD(ret_s32)		/* bool */
-	WORD(ret_obj)
-	WORD(ret_void)	/* this is invalid and should not get called */
+	WORD(ret_s32)-ret_jumps		/* bool */
+	WORD(ret_obj)-ret_jumps
+	WORD(ret_void)-ret_jumps	/* this is invalid and should not get called */
 
 LABEL(arg_jumps)
-	WORD(arg_reload)	/* no more data this word: go get more */
-	WORD(args_done) 	/* end-of-args */
-	WORD(ret_void)	/* this is invalid and should not get called */
-	WORD(arg_32)		/* int */
-	WORD(arg_32)		/* short */
-	WORD(arg_32)		/* char */
-	WORD(arg_64)		/* long */
-	WORD(arg_32)		/* byte */
-	WORD(arg_32)		/* float */
-	WORD(arg_64)		/* double */
-	WORD(arg_32)		/* bool */
-	WORD(arg_object)
-	WORD(ret_void)	/* this is invalid and should not get called */
+	WORD(arg_reload)-arg_jumps	/* no more data this word: go get more */
+	WORD(args_done)-arg_jumps 	/* end-of-args */
+	WORD(ret_void)-arg_jumps	/* this is invalid and should not get called */
+	WORD(arg_32)-arg_jumps		/* int */
+	WORD(arg_32)-arg_jumps		/* short */
+	WORD(arg_32)-arg_jumps		/* char */
+	WORD(arg_64)-arg_jumps		/* long */
+	WORD(arg_32)-arg_jumps		/* byte */
+	WORD(arg_32)-arg_jumps		/* float */
+	WORD(arg_64)-arg_jumps		/* double */
+	WORD(arg_32)-arg_jumps		/* bool */
+	WORD(arg_object)-arg_jumps
+	WORD(ret_void)-arg_jumps	/* this is invalid and should not get called */
