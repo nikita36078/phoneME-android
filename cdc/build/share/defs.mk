@@ -2322,7 +2322,7 @@ CFLAGS_FDLIB   	= $(CFLAGS) $(CCFLAGS_FDLIB) $(CPPFLAGS)
 CFLAGS_JCS	= 
 
 LINKFLAGS       += -Wl,-export-dynamic $(LINK_ARCH_FLAGS)
-LINKLIBS     	+=  -Wl,-wrap,exit -ldl $(LINK_ARCH_LIBS)
+LINKLIBS     	+=  -ldl $(LINK_ARCH_LIBS)
 LINKLIBS_JCS    +=
 
 SO_CCFLAGS   	= $(CCFLAGS_SPEED)
