@@ -1237,7 +1237,7 @@ endif
 
 # MIDP package checker class
 MIDP_PKG_CHECKER = MIDPPkgChecker.java
-GENERATED_CLASSES + = sun.misc.MIDPPkgChecker
+GENERATED_CLASSES += sun.misc.MIDPPkgChecker
 
 CVM_BUILDTIME_CLASSES_min += \
 	sun.misc.MIDPPkgChecker
