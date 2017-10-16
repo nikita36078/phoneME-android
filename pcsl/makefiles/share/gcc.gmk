@@ -53,7 +53,7 @@ LD_OUTPUT=-o
 
 LIB_EXT=.a
 
-CFLAGS+=-c
+CFLAGS+=-c $(PCSL_CFLAGS)
 
 ifeq ($(USE_GCOV), true)
 CFLAGS   += -O0 -fprofile-arcs -ftest-coverage
@@ -67,7 +67,7 @@ CFLAGS+=-O3 -fexpensive-optimizations
 endif
 endif
 
-LD_FLAGS+=
+LD_FLAGS+= $(PCSL_LINK_FLAGS)
 ifeq ($(USE_GCOV), true)
 LD_FLAGS += -lgcov
 endif

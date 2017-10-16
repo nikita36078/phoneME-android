@@ -17,6 +17,8 @@ export TOOLS_DIR=$WORK_DIR/tools
 
 export CVM_DEFINES="--sysroot=/home/android/android-ndk-r14b/platforms/android-24/arch-arm/ -fPIE"
 export LINK_ARCH_FLAGS="--sysroot=/home/android/android-ndk-r14b/platforms/android-24/arch-arm/ -fPIE -pie"
+export PCSL_CFLAGS="$CVM_DEFINES"
+export PCSL_LINK_FLAGS="$LINK_ARCH_FLAGS"
 export USE_MIDP=true
 export USE_JPEG=true
 
